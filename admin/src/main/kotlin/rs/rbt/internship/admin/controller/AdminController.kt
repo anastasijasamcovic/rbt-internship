@@ -1,6 +1,6 @@
-package com.data_import.microservice.controller
+package rs.rbt.internship.admin.controller
 
-import com.data_import.microservice.service.AdminService
+import rs.rbt.internship.admin.service.AdminService
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController

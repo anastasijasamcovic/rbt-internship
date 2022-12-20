@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
 import rs.rbt.internship.data.dto.VacationDTO
 import rs.rbt.internship.data.dto.toResponse
 import rs.rbt.internship.data.model.Employee
+import rs.rbt.internship.search.exception.DateException
 
 @Service
 class SearchService {
@@ -27,7 +28,6 @@ class SearchService {
     }
 
     fun getUsedVacationDaysPerYearForEmployee(year: String, employeeId: Long): Int{
-        //val employee: Employee = employeeService.findById(employeeId)
         val usedVacationDates: List<Vacation> = vacationService.getUsedVacationDaysPerYear(year, employeeId)
         var usedVacationDays: Int = 0
         usedVacationDates.forEach{
@@ -50,15 +50,15 @@ class SearchService {
         return vacations.map { it.toResponse() }
     }
 
-    fun addNewVacation(employeeId: Long, startDate: String, endDate: String): Vacation? {
+    fun addNewVacation(employeeId: Long, startDate: String, endDate: String): VacationDTO {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         val employee: Employee = employeeService.findById(employeeId)
         val startDateFormatted: Date = formatter.parse(startDate)
         val endDateFormatted: Date = formatter.parse(endDate)
         if(startDateFormatted < Date() || endDateFormatted < Date()){
-            return null
+            throw DateException("Date can not be in the past!")
         }
-        return vacationService.saveVacation(employee, startDateFormatted, endDateFormatted)
+        return vacationService.saveVacation(employee, startDateFormatted, endDateFormatted).toResponse()
     }
 
 

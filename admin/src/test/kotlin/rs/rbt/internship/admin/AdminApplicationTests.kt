@@ -1,4 +1,4 @@
-package com.data_import.microservice
+package rs.rbt.internship.admin
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
