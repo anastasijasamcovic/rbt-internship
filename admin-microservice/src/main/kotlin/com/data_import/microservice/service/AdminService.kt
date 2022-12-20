@@ -1,8 +1,8 @@
 package com.data_import.microservice.service
 
 //import com.data_import.microservice.employeec.Employee
-import rs.rbt.internship.model.Vacation
-import rs.rbt.internship.model.Employee
+import rs.rbt.internship.data.model.Vacation
+import rs.rbt.internship.data.model.Employee
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import rs.rbt.internship.service.EmployeeService
-import rs.rbt.internship.service.VacationService
+import rs.rbt.internship.data.service.EmployeeService
+import rs.rbt.internship.data.service.VacationService
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -41,7 +41,7 @@ class AdminService
             loadedRecord.forEach {
                 if(it.recordNumber != 1L) {
                     val days: HashMap<String, Int> = HashMap<String, Int>()
-                    val employee: rs.rbt.internship.model.Employee = rs.rbt.internship.model.Employee(email = it.get(0), password = it.get(1))
+                    val employee: Employee = Employee(email = it.get(0), password = it.get(1))
                     employeeService.saveEmployee(employee)
                 }
             }
