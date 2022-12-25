@@ -6,10 +6,12 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 
 @SpringBootApplication(
-	exclude = [SecurityAutoConfiguration::class,  ManagementWebSecurityAutoConfiguration::class],
-	scanBasePackages = ["rs.rbt.internship.search","rs.rbt.internship.data"]
+	scanBasePackages = ["rs.rbt.internship.search","rs.rbt.internship.data"],
+	exclude = [SecurityAutoConfiguration::class,
+		ManagementWebSecurityAutoConfiguration::class]
 )
 @EnableJpaRepositories("rs.rbt.internship.data.repository")
 @EntityScan("rs.rbt.internship.data.model")

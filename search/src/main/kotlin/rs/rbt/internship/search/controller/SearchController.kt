@@ -1,12 +1,16 @@
 package rs.rbt.internship.search.controller
 
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import rs.rbt.internship.data.dto.VacationDTO
-import rs.rbt.internship.data.model.Vacation
 import rs.rbt.internship.search.exception.DateException
 import rs.rbt.internship.search.service.SearchService
+
 
 @RestController
 @RequestMapping("/employee")
@@ -15,31 +19,44 @@ class SearchController {
     @Autowired
     lateinit var searchService: SearchService
 
-    @GetMapping("/totalDaysPerYear/{employeeId}/{year}")
+    @GetMapping("/totalDaysPerYear/{employeeId}/{vacationYear}")
     fun getTotalNumberOfVacationDaysForEmployeePerYear(
-        @PathVariable year: String,
-        @PathVariable employeeId: Long
-    ): Int {
-        return searchService.getTotalVacationDaysPerYearForEmployee(year, employeeId)
+        @PathVariable @Valid @NotNull vacationYear: String,
+        @PathVariable @Valid @NotNull employeeId: Long
+    ): ResponseEntity<Int> {
+
+//        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+//        val currentPrincipalName: String = authentication.name
+//        println(currentPrincipalName)
+        return ResponseEntity.ok(searchService.getTotalVacationDaysPerYearForEmployee(vacationYear, employeeId))
     }
 
-    @GetMapping("/usedVacationDaysPerYear/{employeeId}/{year}")
-    fun getUsedNumberOfVacationDaysForEmployeePerYear(@PathVariable year: String, @PathVariable employeeId: Long): Int {
-        return searchService.getUsedVacationDaysPerYearForEmployee(year, employeeId)
+    @GetMapping("/usedVacationDaysPerYear/{employeeId}/{vacationYear}")
+    fun getUsedNumberOfVacationDaysForEmployeePerYear(
+        @PathVariable @Valid @NotNull vacationYear: String,
+        @PathVariable @Valid @NotNull employeeId: Long
+    ): ResponseEntity<Int> {
+
+        return ResponseEntity.ok(searchService.getUsedVacationDaysPerYearForEmployee(vacationYear, employeeId))
     }
 
-    @GetMapping("/availableDaysPerYear/{employeeId}/{year}")
-    fun getAvailableDaysPerYear(@PathVariable year: String, @PathVariable employeeId: Long): Int {
-        return searchService.getAvailableDaysPerYear(year, employeeId)
+    @GetMapping("/availableDaysPerYear/{employeeId}/{vacationYear}")
+    fun getAvailableDaysForEmployeePerYear(
+        @PathVariable @Valid @NotNull vacationYear: String,
+        @PathVariable @Valid @NotNull employeeId: Long
+    ): ResponseEntity<Int> {
+
+        return ResponseEntity.ok(searchService.getAvailableDaysPerYear(vacationYear, employeeId))
     }
 
-    @GetMapping("/usedVacations/{employeeId}/{fromDate}/{toDate}")
-    fun getAvailableDaysPerYear(
-        @PathVariable employeeId: Long,
-        @PathVariable fromDate: String,
-        @PathVariable toDate: String
-    ): List<VacationDTO> {
-        return searchService.getUsedVacationsForSpecificTimePeriodForEmployee(employeeId, fromDate, toDate)
+    @GetMapping("/usedVacations/{employeeId}/{vacationStartDate}/{vacationEndDate}")
+    fun getUsedVacationsForSpecificTimePeriodForEmployee(
+        @PathVariable @Valid @NotNull employeeId: Long,
+        @PathVariable @Valid @NotNull vacationStartDate: String,
+        @PathVariable @Valid @NotNull vacationEndDate: String
+    ): ResponseEntity<List<VacationDTO>> {
+
+        return ResponseEntity.ok(searchService.getUsedVacationsForSpecificTimePeriodForEmployee(employeeId, vacationStartDate, vacationEndDate))
     }
 
     @PostMapping("/addNewVacation/{employeeId}/{fromDate}/{toDate}")

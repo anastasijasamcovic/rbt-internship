@@ -9,9 +9,9 @@ import java.util.*
 
 @Repository
 interface VacationRepository: JpaRepository<Vacation, Long> {
-    @Query("SELECT V FROM Vacation V LEFT JOIN FETCH Employee WHERE V.employee.id = :employee_id and EXTRACT(YEAR FROM V.startDate) = :year")
-    fun getUsedVacationsPerYear(@Param("employee_id") employeeId: Long, @Param("year") year: String): List<Vacation>
+    @Query("SELECT V FROM Vacation V LEFT JOIN FETCH Employee WHERE V.employee.id = :employee_id and EXTRACT(YEAR FROM V.startDate) = :year_vacation")
+    fun findUsedVacationsPerYear(@Param("employee_id") employeeId: Long, @Param("year_vacation") year: String): List<Vacation>
 
-    @Query("SELECT V FROM Vacation V LEFT JOIN FETCH Employee WHERE V.employee.id = :employee_id and (V.startDate between :from_date and :to_date or V.endDate between  :from_date and :to_date) ")
-    fun getUsedVacationsForSpecificTimePeriod(@Param("employee_id") employeeId:Long, @Param("from_date") fromDate: Date, @Param("to_date") toDate: Date):List<Vacation>
+    @Query("SELECT V FROM Vacation V LEFT JOIN FETCH Employee WHERE V.employee.id = :employee_id and (V.startDate between :start_date_vacation and :end_date_vacation or V.endDate between  :start_date_vacation and :end_date_vacation) ")
+    fun findUsedVacationsForSpecificTimePeriod(@Param("employee_id") employeeId:Long, @Param("start_date_vacation") startDateVacation: Date, @Param("end_date_vacation") endDateVacation: Date):List<Vacation>
 }
