@@ -17,9 +17,6 @@ import rs.rbt.internship.search.exception.DateException
 @Service
 class SearchService {
 
-//    companion object{
-//
-//    }
     @Autowired
     lateinit var employeeService: EmployeeService
 
