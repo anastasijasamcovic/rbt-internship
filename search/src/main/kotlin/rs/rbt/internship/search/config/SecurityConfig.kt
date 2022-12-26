@@ -10,87 +10,43 @@
 //import org.springframework.security.config.annotation.web.builders.HttpSecurity
 //import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 //import org.springframework.security.config.http.SessionCreationPolicy
-//import org.springframework.security.core.userdetails.UserDetailsService
+//import org.springframework.security.core.userdetails.User
+//import org.springframework.security.core.userdetails.UserDetails
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+//import org.springframework.security.crypto.password.PasswordEncoder
+//import org.springframework.security.provisioning.InMemoryUserDetailsManager
 //import org.springframework.security.web.SecurityFilterChain
 //import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 //
 //
 //@EnableWebSecurity
 //@Configuration
-//class SecurityConfig {
-////    @Bean
-////    fun encoder(): PasswordEncoder {
-////        return BCryptPasswordEncoder()
-////    }
-////
-////    @Throws(java.lang.Exception::class)
-////    @Bean
-////    fun configure(): InMemoryUserDetailsManager {
-////        val user: UserDetails = User.builder()
-////            .username("user")
-////            .password("password")
-////            .roles("USER")
-////            .build()
-////        return InMemoryUserDetailsManager(user)
-////    }
-////
-////    @Bean
-////    @Throws(Exception::class)
-////    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
-////        http
-////            .authorizeHttpRequests(
-////                Customizer { auth->
-////                    auth.anyRequest().authenticated().and().httpBasic()
-////                }
-////            )
-////            .httpBasic(withDefaults())
-////        return http.build()
-////    }
+//class SecurityConfig<UserDetails> {
+//    @Bean
+//    fun encoder(): PasswordEncoder {
+//        return BCryptPasswordEncoder()
+//    }
+//
+//    @Throws(java.lang.Exception::class)
+//    @Bean
+//    fun configure(): InMemoryUserDetailsManager {
+//        val user: org.springframework.security.core.userdetails.UserDetails = User.builder()
+//            .username("user1@rbt.rs")
+//            .password("123")
+//            .roles("USER")
+//            .build()
+//        return InMemoryUserDetailsManager(user)
+//    }
 //
 //    @Bean
 //    @Throws(Exception::class)
 //    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
-//        val filter: AbstractAuthenticationProcessingFilter = CustomizedAuthenticationFilter(authenticationManager())
-//        filter.setFilterProcessesUrl("/api/login")
-//        http.csrf().disable()
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/login").permitAll()
-//        http.authorizeRequests().anyRequest().authenticated()
-//        http.addFilter(filter)
+//        http
+//            .authorizeHttpRequests { auth ->
+//                auth.anyRequest().authenticated().and()
+//            }
+//            .httpBasic()
 //        return http.build()
 //    }
-//
-//    @Bean
-//    @Throws(Exception::class)
-//    fun authenticationManager(): AuthenticationManager? {
-//        return configuration.getAuthenticationManager()
-//    }
-//
-//    @Autowired
-//    @Throws(Exception::class)
-//    fun configure(builder: AuthenticationManagerBuilder) {
-//        builder.userDetailsService<UserDetailsService>(userService).passwordEncoder(BCryptPasswordEncoder())
-//    }
-//
-//
-//
-//
-//
-//
-//
-////    @Bean
-////    fun apiFilterChain(http: HttpSecurity): SecurityFilterChain {
-////        http {
-////            securityMatcher("/api/**")
-////            authorizeRequests {
-////                authorize(anyRequest, hasRole("ADMIN"))
-////            }
-////            httpBasic { }
-////        }
-////        return http.build()
-////    }
-//
-//
 //
 //}

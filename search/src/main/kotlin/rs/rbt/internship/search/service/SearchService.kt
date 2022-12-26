@@ -16,6 +16,10 @@ import rs.rbt.internship.search.exception.DateException
 
 @Service
 class SearchService {
+
+//    companion object{
+//
+//    }
     @Autowired
     lateinit var employeeService: EmployeeService
 
@@ -32,7 +36,7 @@ class SearchService {
         var usedVacationDays: Int = 0
         usedVacationDates.forEach{
             //Duration.between(it.startDate.toInstant(), it.endDate)
-            usedVacationDays += TimeUnit.DAYS.convert((it.endDate?.time?.minus(it.startDate?.time!!)!!), TimeUnit.MILLISECONDS).toInt()
+            usedVacationDays += TimeUnit.DAYS.convert((it.endDate?.time?.minus(it.startDate.time!!)!!), TimeUnit.MILLISECONDS).toInt()
         }
         return usedVacationDays
     }

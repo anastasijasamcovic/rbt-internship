@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 @SpringBootApplication(
 	scanBasePackages = ["rs.rbt.internship.search","rs.rbt.internship.data"],
-	exclude = [SecurityAutoConfiguration::class,
+	exclude = [ SecurityAutoConfiguration::class,
 		ManagementWebSecurityAutoConfiguration::class]
 )
 @EnableJpaRepositories("rs.rbt.internship.data.repository")
