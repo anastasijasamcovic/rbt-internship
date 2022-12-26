@@ -7,7 +7,7 @@ import java.util.*
 
 @Service
 interface IVacationService {
-    fun getUsedVacationDaysPerYear(year: String, employee: Long): List<Vacation>
-    fun getVacationsForSpecificTimePeriod(employeeId: Long, fromDate: Date, toDate: Date):List<Vacation>
+    fun getUsedVacationDaysPerYear(year: String, employeeEmail: String): List<Vacation>
+    fun getVacationsForSpecificTimePeriod(employeeEmail: String, fromDate: Date, toDate: Date):List<Vacation>
     fun saveVacation(employee: Employee, startDate: Date, endDate: Date):Vacation
 }

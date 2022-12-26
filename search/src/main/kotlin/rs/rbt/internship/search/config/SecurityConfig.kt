@@ -34,9 +34,9 @@ class SecurityConfig<UserDetails> {
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
-        http
+        http.csrf().disable()
             .authorizeHttpRequests { auth ->
-                auth.anyRequest().hasRole("USER")
+                auth.anyRequest().authenticated()
             }
             .httpBasic()
         return http.build()

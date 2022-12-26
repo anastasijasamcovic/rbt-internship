@@ -15,12 +15,12 @@ class VacationService: IVacationService {
     @Autowired
     lateinit var vacationRepository: VacationRepository
 
-    override fun getUsedVacationDaysPerYear(year: String, employee: Long): List<Vacation> {
-        return vacationRepository.findUsedVacationsPerYear(employee, year)
+    override fun getUsedVacationDaysPerYear(year: String, employeeEmail: String): List<Vacation> {
+        return vacationRepository.findUsedVacationsPerYear(employeeEmail, year)
     }
 
-    override fun getVacationsForSpecificTimePeriod(employeeId: Long, fromDate: Date, toDate: Date):List<Vacation>{
-        return vacationRepository.findUsedVacationsForSpecificTimePeriod(employeeId, fromDate, toDate)
+    override fun getVacationsForSpecificTimePeriod(employeeEmail: String, fromDate: Date, toDate: Date):List<Vacation>{
+        return vacationRepository.findUsedVacationsForSpecificTimePeriod(employeeEmail, fromDate, toDate)
     }
 
     override fun saveVacation(employee: Employee, startDate: Date, endDate: Date):Vacation{

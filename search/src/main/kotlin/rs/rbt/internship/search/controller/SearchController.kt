@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import rs.rbt.internship.data.dto.VacationDTO
+import rs.rbt.internship.data.exception.EmployeeNotFoundException
 import rs.rbt.internship.search.exception.DateException
 import rs.rbt.internship.search.service.SearchService
 
@@ -19,60 +20,70 @@ class SearchController {
     @Autowired
     lateinit var searchService: SearchService
 
-    @GetMapping("/totalDaysPerYear/{employeeId}/{vacationYear}")
+    @GetMapping("/totalDaysPerYear/{vacationYear}")
     fun getTotalNumberOfVacationDaysForEmployeePerYear(
-        @PathVariable @Valid @NotNull vacationYear: String,
-        @PathVariable @Valid @NotNull employeeId: Long
+        @PathVariable @Valid @NotNull vacationYear: String
     ): ResponseEntity<Int> {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        val loggedEmail: String = authentication.name
 
-//        val authentication: Authentication = SecurityContextHolder.getContext().authentication
-//        val currentPrincipalName: String = authentication.name
-//        println(currentPrincipalName)
-        return ResponseEntity.ok(searchService.getTotalVacationDaysPerYearForEmployee(vacationYear, employeeId))
+        return ResponseEntity.ok(searchService.getTotalVacationDaysPerYearForEmployee(vacationYear, loggedEmail))
     }
 
-    @GetMapping("/usedVacationDaysPerYear/{employeeId}/{vacationYear}")
+    @GetMapping("/usedVacationDaysPerYear/{vacationYear}")
     fun getUsedNumberOfVacationDaysForEmployeePerYear(
-        @PathVariable @Valid @NotNull vacationYear: String,
-        @PathVariable @Valid @NotNull employeeId: Long
+        @PathVariable @Valid @NotNull vacationYear: String
     ): ResponseEntity<Int> {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        val loggedEmail: String = authentication.name
 
-        return ResponseEntity.ok(searchService.getUsedVacationDaysPerYearForEmployee(vacationYear, employeeId))
+        return ResponseEntity.ok(searchService.getUsedVacationDaysPerYearForEmployee(vacationYear, loggedEmail))
     }
 
-    @GetMapping("/availableDaysPerYear/{employeeId}/{vacationYear}")
+    @GetMapping("/availableDaysPerYear/{vacationYear}")
     fun getAvailableDaysForEmployeePerYear(
         @PathVariable @Valid @NotNull vacationYear: String,
-        @PathVariable @Valid @NotNull employeeId: Long
     ): ResponseEntity<Int> {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        val loggedEmail: String = authentication.name
 
-        return ResponseEntity.ok(searchService.getAvailableDaysPerYear(vacationYear, employeeId))
+        return ResponseEntity.ok(searchService.getAvailableDaysPerYear(vacationYear, loggedEmail))
     }
 
-    @GetMapping("/usedVacations/{employeeId}/{vacationStartDate}/{vacationEndDate}")
+    @GetMapping("/usedVacations/{vacationStartDate}/{vacationEndDate}")
     fun getUsedVacationsForSpecificTimePeriodForEmployee(
-        @PathVariable @Valid @NotNull employeeId: Long,
         @PathVariable @Valid @NotNull vacationStartDate: String,
         @PathVariable @Valid @NotNull vacationEndDate: String
     ): ResponseEntity<List<VacationDTO>> {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        val loggedEmail: String = authentication.name
 
-        return ResponseEntity.ok(searchService.getUsedVacationsForSpecificTimePeriodForEmployee(employeeId, vacationStartDate, vacationEndDate))
+        return ResponseEntity.ok(
+            searchService.getUsedVacationsForSpecificTimePeriodForEmployee(
+                loggedEmail,
+                vacationStartDate,
+                vacationEndDate
+            )
+        )
     }
 
-    @PostMapping("/addNewVacation/{employeeId}/{fromDate}/{toDate}")
+    @PostMapping("/addNewVacation/{vacationStartDate}/{vacationEndDate}")
     fun addNewVacation(
-        @PathVariable employeeId: Long,
-        @PathVariable fromDate: String,
-        @PathVariable toDate: String
+        @PathVariable vacationStartDate: String,
+        @PathVariable vacationEndDate: String
     ): ResponseEntity<VacationDTO> {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        val loggedEmail: String = authentication.name
 
-        return ResponseEntity.ok(searchService.addNewVacation(employeeId, fromDate, toDate))
+        return ResponseEntity.ok(searchService.addNewVacation(loggedEmail, vacationStartDate, vacationEndDate))
     }
 
-    @ExceptionHandler(DateException::class)
-    fun invalidDate(exception: DateException): ResponseEntity<String> {
+    @ExceptionHandler(*[DateException::class, EmployeeNotFoundException::class])
+    fun invalidDate(exception: Exception): ResponseEntity<String> {
 
         return ResponseEntity.badRequest().body(exception.message)
     }
+
+
 
 }

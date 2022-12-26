@@ -24,18 +24,16 @@ class AdminService {
     @Autowired
     lateinit var vacationService: VacationService
 
-    fun importEmployees(file: MultipartFile) {
-        val fileReader = BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8))
-        val csvParser = CSVParser(fileReader, CSVFormat.DEFAULT.withHeader())
 
-        val loadedRecord: List<CSVRecord> = csvParser.records
+    fun importEmployees(file: MultipartFile) {
+        val loadedRecord: List<CSVRecord> = readFile(file)
 
         loadedRecord.forEach {
             if (it.get(0).equals("") || it.get(1).equals("")) {
                 throw CsvException("Data not found")
             }
-            if (it.recordNumber != 1L) {
-                val employee: Employee = Employee(email = it.get(0), password = it.get(1))
+            if (it.recordNumber != 1L || it.recordNumber != 2L) {
+                val employee = Employee(email = it.get(0), password = it.get(1))
                 employeeService.saveEmployee(employee)
             }
         }
@@ -43,9 +41,7 @@ class AdminService {
 
     fun importNumberOfVacationDays(file: MultipartFile) {
 
-        val fileReader = BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8))
-        val csvParser = CSVParser(fileReader, CSVFormat.DEFAULT)
-        val loadedRecord: List<CSVRecord> = csvParser.records
+        val loadedRecord: List<CSVRecord> = readFile(file)
         if (loadedRecord.isEmpty()) {
             throw CsvException("File is empty.")
         }
@@ -67,9 +63,7 @@ class AdminService {
 
     fun importUsedVacationDate(file: MultipartFile) {
 
-        val fileReader = BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8))
-        val csvParser = CSVParser(fileReader, CSVFormat.DEFAULT.withHeader())
-        val loadedRecord: List<CSVRecord> = csvParser.records
+        val loadedRecord: List<CSVRecord> = readFile(file)
 
         loadedRecord.forEach {
             if (it.get(0).equals("") || it.get(1).equals("")) {
@@ -78,7 +72,7 @@ class AdminService {
             if (it.recordNumber != 1L) {
                 val employee: Employee = employeeService.findEmployeeByEmail(it.get(0))
                 val formatter = SimpleDateFormat("EEE, MMM d, yyyy")
-                val vacation: Vacation =
+                val vacation =
                     Vacation(
                         startDate = formatter.parse(it.get(1)),
                         endDate = formatter.parse(it.get(2)),
@@ -90,5 +84,12 @@ class AdminService {
 
             }
         }
+    }
+
+    private fun readFile(file: MultipartFile): List<CSVRecord> {
+        val fileReader = BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8))
+        val csvParser = CSVParser(fileReader, CSVFormat.DEFAULT)
+
+        return csvParser.records
     }
 }
