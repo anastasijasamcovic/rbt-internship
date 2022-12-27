@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @SpringBootApplication(
     scanBasePackages = ["rs.rbt.internship.admin", "rs.rbt.internship.data"],
-    exclude = [ SecurityAutoConfiguration::class,
-            ManagementWebSecurityAutoConfiguration::class]
 )
 @EnableJpaRepositories("rs.rbt.internship.data.repository")
 @EntityScan("rs.rbt.internship.data.model")
