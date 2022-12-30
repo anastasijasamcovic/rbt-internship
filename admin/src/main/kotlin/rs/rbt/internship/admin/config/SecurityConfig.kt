@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import rs.rbt.internship.admin.config.filter.ApiKeyAuthenticationFilter
-import rs.rbt.internship.admin.config.token.ApiKeyAuthenticationToken
 
 
 @Configuration

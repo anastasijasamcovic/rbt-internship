@@ -13,4 +13,6 @@ interface IEmployeeService {
 
     fun findEmployeeById(employeeId: Long): Employee
 
+    fun deleteAll()
+
 }

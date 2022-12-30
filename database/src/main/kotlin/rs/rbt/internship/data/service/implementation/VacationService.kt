@@ -23,7 +23,11 @@ class VacationService: IVacationService {
         return vacationRepository.findUsedVacationsForSpecificTimePeriod(employeeEmail, fromDate, toDate)
     }
 
-    override fun saveVacation(employee: Employee, startDate: Date, endDate: Date):Vacation{
-        return vacationRepository.save(Vacation(employee = employee, startDate = startDate, endDate = endDate))
+    override fun saveVacation(vacation: Vacation):Vacation{
+        return vacationRepository.save(vacation)
+    }
+
+    override fun deleteAll() {
+       vacationRepository.deleteAll()
     }
 }

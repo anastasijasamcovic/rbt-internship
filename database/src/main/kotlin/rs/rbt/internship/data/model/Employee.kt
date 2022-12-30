@@ -8,7 +8,7 @@ data class Employee(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     var email: String,
     @Column(name = "password")
     var password: String,

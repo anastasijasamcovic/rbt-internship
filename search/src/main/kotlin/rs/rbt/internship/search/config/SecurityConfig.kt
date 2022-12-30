@@ -1,36 +1,33 @@
 package rs.rbt.internship.search.config
 
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
+import rs.rbt.internship.data.service.implementation.EmployeeService
 
 
 @EnableWebSecurity
 @Configuration
-class SecurityConfig<UserDetails> {
-    @Bean
-    fun encoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+class SecurityConfig {
 
+    @Autowired
+    private lateinit var authProvider: CustomAuthenticationProvider
+
+    @Bean
     @Throws(java.lang.Exception::class)
-    @Bean
-    fun configure(): InMemoryUserDetailsManager {
-        val user: org.springframework.security.core.userdetails.UserDetails = User.builder()
-            .username("user1@rbt.rs")
-            .password(encoder().encode("123"))
-            .roles("USER")
-            .build()
-        return InMemoryUserDetailsManager(user)
+    fun authManager(http: HttpSecurity): AuthenticationManager? {
+        val authenticationManagerBuilder = http.getSharedObject(
+            AuthenticationManagerBuilder::class.java
+        )
+        authenticationManagerBuilder.authenticationProvider(authProvider)
+        return authenticationManagerBuilder.build()
     }
-
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
@@ -42,4 +39,8 @@ class SecurityConfig<UserDetails> {
         return http.build()
     }
 
+}
+
+private fun AuthenticationManagerBuilder.authenticationProvider(authProvider: CustomAuthenticationProvider): CustomAuthenticationProvider {
+    return CustomAuthenticationProvider()
 }

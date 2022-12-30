@@ -39,4 +39,8 @@ class EmployeeService : IEmployeeService {
 
         return employee.get()
     }
+
+    override fun deleteAll() {
+        employeeRepository.deleteAll()
+    }
 }
