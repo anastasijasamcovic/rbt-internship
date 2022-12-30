@@ -36,6 +36,12 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
 		<dependency>
 			<groupId>rs.rbt.internship.data</groupId>
 			<artifactId>database</artifactId>

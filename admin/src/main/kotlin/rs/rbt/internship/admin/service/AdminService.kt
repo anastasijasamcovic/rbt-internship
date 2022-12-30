@@ -3,6 +3,7 @@ package rs.rbt.internship.admin.service
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
+import org.apache.commons.io.FilenameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -22,6 +23,8 @@ import java.text.SimpleDateFormat
 @Service
 class AdminService {
     companion object {
+        private const val ALLOWED_FILE_EXTENSION = "csv"
+        private const val INVALID_FILE_EXTENSION = "File must have csv extension"
         private const val DATE_FORMAT = "EEE, MMM d, yyyy"
         private const val WRONG_RECORDS_MESSAGE = "File have wrong records. Correct record were written. "
         private const val EMPTY_FILE_MESSAGE = "File is empty."
@@ -37,6 +40,7 @@ class AdminService {
 
 
     fun importEmployees(file: MultipartFile) {
+        isCSVFile(file)
         val loadedRecord: List<CSVRecord> = readFile(file)
         if (loadedRecord.isEmpty()) {
             throw CsvException(EMPTY_FILE_MESSAGE)
@@ -60,7 +64,7 @@ class AdminService {
     }
 
     fun importNumberOfVacationDays(file: MultipartFile) {
-
+        isCSVFile(file)
         val loadedRecord: List<CSVRecord> = readFile(file)
         if (loadedRecord.isEmpty()) {
             throw CsvException(EMPTY_FILE_MESSAGE)
@@ -92,7 +96,7 @@ class AdminService {
     }
 
     fun importUsedVacationDate(file: MultipartFile) {
-
+        isCSVFile(file)
         val loadedRecord: List<CSVRecord> = readFile(file)
         var wrongRecordExist = false
 
@@ -131,6 +135,14 @@ class AdminService {
         val csvParser = CSVParser(fileReader, CSVFormat.DEFAULT)
 
         return csvParser.records
+    }
+
+    private fun isCSVFile(file: MultipartFile){
+        val fileExtension = FilenameUtils.getExtension(file.originalFilename)
+
+        if (fileExtension != ALLOWED_FILE_EXTENSION) {
+            throw CsvException(INVALID_FILE_EXTENSION)
+        }
     }
 
     private fun isNumeric(toCheck: String): Boolean {
