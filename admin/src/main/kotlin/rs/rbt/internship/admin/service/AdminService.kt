@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import rs.rbt.internship.admin.constants.CSVConstants
 import rs.rbt.internship.admin.exception.CsvException
 import rs.rbt.internship.admin.exception.WrongRecordsException
 import rs.rbt.internship.admin.helper.patternMatches
@@ -18,19 +19,12 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
+import rs.rbt.internship.admin.constants.CSVConstants.*
+import rs.rbt.internship.admin.extensions.*
 
 
 @Service
 class AdminService {
-    companion object {
-        private const val ALLOWED_FILE_EXTENSION = "csv"
-        private const val INVALID_FILE_EXTENSION = "File must have csv extension"
-        private const val DATE_FORMAT = "EEE, MMM d, yyyy"
-        private const val WRONG_RECORDS_MESSAGE = "File have wrong records. Correct record were written. "
-        private const val EMPTY_FILE_MESSAGE = "File is empty."
-        private const val EMAIL_REGEX_PATTERN = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}\$"
-        private const val PASSWORD_REGEX_PATTERN = "[A-Z]+[a-z]+[0-9]*[!|#|@|\$]+"
-    }
 
     @Autowired
     lateinit var employeeService: EmployeeService
@@ -40,71 +34,69 @@ class AdminService {
 
 
     fun importEmployees(file: MultipartFile) {
-        isCSVFile(file)
+
         val loadedRecord: List<CSVRecord> = readFile(file)
-        if (loadedRecord.isEmpty()) {
-            throw CsvException(EMPTY_FILE_MESSAGE)
-        }
         var wrongRecordExist = false
 
         loadedRecord.forEach {
-            if(it.get(0) != "Employee Email" && it.get(0) != "Vacation year") {
-                if (isValidEmail(it.get(0)) && isValidPassword(it.get(1)) && it.size() == 2) {
-                    val employee = Employee(email = it.get(0), password = it.get(1))
-                    employeeService.saveEmployee(employee)
-                } else {
-                    wrongRecordExist = true
+            if(it.size() == 2) {
+                if (it.get(0) != CSVConstants.EMPLOYEE_EMAIL && it.get(0) != CSVConstants.VACATION_YEAR) {
+                    if (isValidEmail(it.getEmail()) && isValidPassword(it.getPassword())) {
+                        val employee = Employee(email = it.getEmail(), password = it.getPassword())
+                        employeeService.saveEmployee(employee)
+                    } else {
+                        wrongRecordExist = true
+                    }
                 }
             }
         }
 
         if (wrongRecordExist) {
-            throw WrongRecordsException(WRONG_RECORDS_MESSAGE)
+            throw WrongRecordsException(CSVConstants.WRONG_RECORDS_MESSAGE)
         }
     }
 
     fun importNumberOfVacationDays(file: MultipartFile) {
-        isCSVFile(file)
         val loadedRecord: List<CSVRecord> = readFile(file)
-        if (loadedRecord.isEmpty()) {
-            throw CsvException(EMPTY_FILE_MESSAGE)
-        }
+
         var year = ""
         var wrongRecordExist = false
 
         loadedRecord.forEach {
-            if (it.get(0).equals("Vacation year")) {
+            if (it.get(0).equals(CSVConstants.VACATION_YEAR)) {
                 year = it.get(1)
             }
-            if(it.get(0) != "Employee" && it.get(0) != "Vacation year") {
-                if (isValidEmail(it.get(0)) && isNumeric(it.get(1)) && it.size() == 2) {
-                    val employee: Employee = employeeService.findEmployeeByEmail(it.get(0))
-                    val vacationDaysPerYear: MutableMap<String, Int> = employee.vacationDaysPerYear
-                    vacationDaysPerYear[year] = it.get(1).toInt()
-                    employee.vacationDaysPerYear = vacationDaysPerYear
-                    employeeService.saveEmployee(employee)
-                } else {
-                    wrongRecordExist = true
-                    println(it)
+            if(it.size() == 2) {
+                if (it.get(0) != CSVConstants.EMPLOYEE && it.get(0) != CSVConstants.VACATION_YEAR) {
+                    if (isValidEmail(it.getEmail()) && isNumeric(it.getNumberOfVacationDays())) {
+                        val employee: Employee = employeeService.findEmployeeByEmail(it.getEmail())
+                        val vacationDaysPerYear: MutableMap<String, Int> = employee.vacationDaysPerYear
+                        vacationDaysPerYear[year] = it.getNumberOfVacationDays().toInt()
+                        employee.vacationDaysPerYear = vacationDaysPerYear
+                        employeeService.saveEmployee(employee)
+                    } else {
+                        wrongRecordExist = true
+                        println(it)
+                    }
                 }
             }
         }
 
         if (wrongRecordExist) {
-            throw WrongRecordsException(WRONG_RECORDS_MESSAGE)
+            throw WrongRecordsException(CSVConstants.WRONG_RECORDS_MESSAGE)
         }
     }
 
     fun importUsedVacationDate(file: MultipartFile) {
-        isCSVFile(file)
         val loadedRecord: List<CSVRecord> = readFile(file)
         var wrongRecordExist = false
 
         loadedRecord.forEach {
-            if(it.get(0) != "Employee") {
-                if (isValidEmail(it.get(0)) && isValidDate(it.get(1)) && isValidDate(it.get(2)) && it.size() == 3) {
+            if(it.size() == 3){
+            if(it.get(0) != CSVConstants.EMPLOYEE) {
+                if (isValidEmail(it.getEmail()) && isValidDate(it.getStartVacationDate()) && isValidDate(it.getEndVacationDate())) {
                     val employee: Employee = employeeService.findEmployeeByEmail(it.get(0))
-                    val formatter = SimpleDateFormat(DATE_FORMAT)
+                    val formatter = SimpleDateFormat(CSVConstants.DATE_FORMAT)
                     val vacation =
                         Vacation(
                             startDate = formatter.parse(it.get(1)),
@@ -118,10 +110,11 @@ class AdminService {
                 } else {
                     wrongRecordExist = true
                 }
+                }
             }
         }
         if (wrongRecordExist) {
-            throw WrongRecordsException(WRONG_RECORDS_MESSAGE)
+            throw WrongRecordsException(CSVConstants.WRONG_RECORDS_MESSAGE)
         }
     }
 
@@ -131,17 +124,22 @@ class AdminService {
     }
 
     private fun readFile(file: MultipartFile): List<CSVRecord> {
+        isCSVFile(file)
         val fileReader = BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8))
         val csvParser = CSVParser(fileReader, CSVFormat.DEFAULT)
+        val loadedRecords: List<CSVRecord> = csvParser.records
+        if(loadedRecords.isEmpty()){
+            throw CsvException(CSVConstants.EMPTY_FILE_MESSAGE)
+        }
 
-        return csvParser.records
+        return loadedRecords
     }
 
     private fun isCSVFile(file: MultipartFile){
         val fileExtension = FilenameUtils.getExtension(file.originalFilename)
 
-        if (fileExtension != ALLOWED_FILE_EXTENSION) {
-            throw CsvException(INVALID_FILE_EXTENSION)
+        if (fileExtension != CSVConstants.ALLOWED_FILE_EXTENSION) {
+            throw CsvException(CSVConstants.INVALID_FILE_EXTENSION)
         }
     }
 
@@ -152,7 +150,7 @@ class AdminService {
 
     private fun isValidEmail(email: String): Boolean {
 
-        return patternMatches(email, EMAIL_REGEX_PATTERN)
+        return patternMatches(email, CSVConstants.EMAIL_REGEX_PATTERN)
     }
 
     private fun isValidDate(date: String): Boolean {
@@ -232,6 +230,6 @@ class AdminService {
     }
 
     private fun isValidPassword(password: String): Boolean{
-        return patternMatches(password, PASSWORD_REGEX_PATTERN)
+        return patternMatches(password, CSVConstants.PASSWORD_REGEX_PATTERN)
     }
 }
