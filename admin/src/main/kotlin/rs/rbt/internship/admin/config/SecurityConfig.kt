@@ -8,33 +8,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import rs.rbt.internship.admin.config.filter.ApiKeyAuthenticationFilter
+import rs.rbt.internship.admin.constants.SecurityConstants.Companion.API_KEY_HEADER
+import rs.rbt.internship.admin.constants.SecurityConstants.Companion.API_KEY_VALUE
+import rs.rbt.internship.admin.constants.SecurityConstants.Companion.BAD_CREDENTIALS
 
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
 
-//    @Bean
-//    @Throws(Exception::class)
-//    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
-//        println("anaaaa")
-//        http
-//            .authorizeHttpRequests { auth ->
-//                auth.anyRequest().hasRole("USER")
-//            }
-//            .addFilterBefore(APIKeyAuthenticationFilter())
-//        return http.build()
-//    }
-
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain?{
-        val filter = ApiKeyAuthenticationFilter("api-key")
+        val filter = ApiKeyAuthenticationFilter(API_KEY_HEADER)
         filter.setAuthenticationManager { authentication ->
             val principal = authentication.principal as String
             println(principal)
-            if (principal != "123abc") {
-                throw BadCredentialsException("The API key was not found or not the expected value.")
+            if (principal != API_KEY_VALUE) {
+                throw BadCredentialsException(BAD_CREDENTIALS)
             }
             authentication.isAuthenticated = true
             authentication
