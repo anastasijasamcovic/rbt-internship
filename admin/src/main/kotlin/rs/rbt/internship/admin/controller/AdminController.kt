@@ -10,7 +10,6 @@ import rs.rbt.internship.data.dto.ExceptionDTO
 @RequestMapping("/admins")
 class AdminController(val adminService: AdminService) {
 
-
     @PostMapping("/import-employees")
     fun importEmployees(@RequestParam("file") file: MultipartFile) {
 
@@ -38,7 +37,11 @@ class AdminController(val adminService: AdminService) {
     @ExceptionHandler(Exception::class)
     fun handleException(exception: Exception): ResponseEntity<ExceptionDTO> {
 
-        return ResponseEntity.ok(exception.message?.let { ExceptionDTO(message= it, status = 400, statusText = "BAD REQUEST") })
+        return ResponseEntity.ok(exception.message?.let {
+            ExceptionDTO(message= it, status = 400, statusText = "BAD REQUEST")
+        })
+
+
     }
 
 }

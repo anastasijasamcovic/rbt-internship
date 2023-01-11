@@ -2,15 +2,13 @@ package rs.rbt.internship.data.service.implementation
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
-import rs.rbt.internship.data.model.Employee
 import rs.rbt.internship.data.model.Vacation
 import rs.rbt.internship.data.repository.VacationRepository
 import rs.rbt.internship.data.service.interfaces.IVacationService
 import java.util.*
 
 @Component
-class VacationService: IVacationService {
+class VacationService : IVacationService {
 
     @Autowired
     lateinit var vacationRepository: VacationRepository
@@ -19,15 +17,19 @@ class VacationService: IVacationService {
         return vacationRepository.findUsedVacationsPerYear(employeeEmail, year)
     }
 
-    override fun getVacationsForSpecificTimePeriod(employeeEmail: String, fromDate: Date, toDate: Date):List<Vacation>{
+    override fun getVacationsForSpecificTimePeriod(
+        employeeEmail: String,
+        fromDate: Date,
+        toDate: Date
+    ): List<Vacation> {
         return vacationRepository.findUsedVacationsForSpecificTimePeriod(employeeEmail, fromDate, toDate)
     }
 
-    override fun saveVacation(vacation: Vacation):Vacation{
+    override fun saveVacation(vacation: Vacation): Vacation {
         return vacationRepository.save(vacation)
     }
 
     override fun deleteAll() {
-       vacationRepository.deleteAll()
+        vacationRepository.deleteAll()
     }
 }

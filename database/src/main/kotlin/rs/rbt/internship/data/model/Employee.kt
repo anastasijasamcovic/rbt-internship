@@ -2,7 +2,6 @@ package rs.rbt.internship.data.model
 
 import jakarta.persistence.*
 
-
 @Entity
 data class Employee(
     @Id

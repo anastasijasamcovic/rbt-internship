@@ -1,6 +1,6 @@
 package rs.rbt.internship.admin.constants
 
-public class CSVConstants {
+class CSVConstants {
     companion object{
         const val ALLOWED_FILE_EXTENSION = "csv"
         const val INVALID_FILE_EXTENSION = "File must have csv extension"

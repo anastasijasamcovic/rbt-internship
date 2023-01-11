@@ -12,7 +12,6 @@ interface EmployeeRepository: JpaRepository<Employee, Long> {
     @Query(value="select vd.vacation_days from vacations_days_per_year vd where vd.year=?1 and vd.employee_id=?2", nativeQuery = true)
     fun findVacationDaysForEmployeePerYear(yearVacation:String, employeeId: Long): Int
 
-
     fun findEmployeeByEmail(employeeEmail: String): Optional<Employee>
 
 }

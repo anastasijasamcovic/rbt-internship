@@ -1,5 +1,6 @@
 package rs.rbt.internship.admin.config
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.BadCredentialsException
@@ -8,22 +9,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import rs.rbt.internship.admin.config.filter.ApiKeyAuthenticationFilter
-import rs.rbt.internship.admin.constants.SecurityConstants.Companion.API_KEY_HEADER
-import rs.rbt.internship.admin.constants.SecurityConstants.Companion.API_KEY_VALUE
 import rs.rbt.internship.admin.constants.SecurityConstants.Companion.BAD_CREDENTIALS
 
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
+    @Value("\${api-key-header}")
+    private val API_KEY_HEADER: String = ""
+
+    @Value("\${api-key-value}")
+    private val API_KEY_VALUE: String = ""
 
     @Bean
     @Throws(Exception::class)
-    fun filterChain(http: HttpSecurity): SecurityFilterChain?{
+    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         val filter = ApiKeyAuthenticationFilter(API_KEY_HEADER)
         filter.setAuthenticationManager { authentication ->
             val principal = authentication.principal as String
-            println(principal)
             if (principal != API_KEY_VALUE) {
                 throw BadCredentialsException(BAD_CREDENTIALS)
             }
@@ -31,11 +34,10 @@ class SecurityConfig {
             authentication
         }
 
-        http.csrf().disable()
+        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().addFilter(filter)
             .authorizeHttpRequests { auth ->
                 auth.anyRequest().authenticated()
             }
-            .addFilter(filter)
 
         return http.build()
     }

@@ -1,26 +1,9 @@
 package rs.rbt.internship.admin.helper
 
-import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVParser
-import org.apache.commons.csv.CSVRecord
-import org.apache.commons.io.FilenameUtils
-import org.springframework.web.multipart.MultipartFile
 import rs.rbt.internship.admin.constants.CSVConstants
-import rs.rbt.internship.admin.exception.CsvException
-import rs.rbt.internship.admin.service.AdminService
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
-import rs.rbt.internship.admin.constants.CSVConstants.*
+import rs.rbt.internship.admin.constants.DayEnum.Companion.isInDayEnum
+import rs.rbt.internship.admin.constants.MonthEnum.Companion.isInMonthEnum
 
-
- fun isCSVFile(file: MultipartFile){
-    val fileExtension = FilenameUtils.getExtension(file.originalFilename)
-
-    if (fileExtension != CSVConstants.ALLOWED_FILE_EXTENSION) {
-        throw CsvException(CSVConstants.INVALID_FILE_EXTENSION)
-    }
-}
 
 fun isNumeric(toCheck: String): Boolean {
 
@@ -36,7 +19,7 @@ fun isValidDate(date: String): Boolean {
     //date format "EEE, MMM d, yyyy"
     val dateWithoutComma = date.replace(",", "")
     val splitDate = dateWithoutComma.split(" ")
-    if(splitDate.size == 4){
+    if (splitDate.size == 4) {
         if (isValidDay(splitDate[0]) && isValidMonth(splitDate[1]) && isValidDayInMonth(
                 day = splitDate[2],
                 month = splitDate[1],
@@ -50,18 +33,13 @@ fun isValidDate(date: String): Boolean {
 }
 
 fun isValidDay(day: String): Boolean {
-    val days = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-    return days.contains(day)
+    return isInDayEnum(day)
 }
 
 fun isValidMonth(month: String): Boolean {
-    val months = listOf(
-        "January", "February", "March", "April", "May", "June", "July", "August",
-        "September", "October", "November", "December"
-    )
 
-    return months.contains(month)
+    return isInMonthEnum(month)
 }
 
 fun isValidDayInMonth(day: String, month: String, year: String): Boolean {
@@ -108,6 +86,6 @@ fun isLeapYear(year: String): Boolean {
     return leap
 }
 
-fun isValidPassword(password: String): Boolean{
+fun isValidPassword(password: String): Boolean {
     return patternMatches(password, CSVConstants.PASSWORD_REGEX_PATTERN)
 }

@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
-import rs.rbt.internship.data.service.implementation.EmployeeService
 
 
 @EnableWebSecurity
@@ -28,6 +27,7 @@ class SecurityConfig {
         authenticationManagerBuilder.authenticationProvider(authProvider)
         return authenticationManagerBuilder.build()
     }
+
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
